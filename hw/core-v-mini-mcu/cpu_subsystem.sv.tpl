@@ -293,6 +293,109 @@ module cpu_subsystem
 
     );
 
+  end else if (CPU_TYPE == cv32e40s) begin : gen_cv32e40s
+
+    // instantiate the core
+    cv32e40s_core #(
+        .LIB             (0),
+        .RV32            (0),
+        .B_EXT           (0),
+        .M_EXT           (1),
+        .DEBUG           (0),
+        .DM_REGION_START (32'hF0000000),
+        .DM_REGION_END   (32'hF0003FFF),
+        .DBG_NUM_TRIGGERS(1),
+        .PMP_GRANULARITY (0),
+        .PMP_NUM_REGIONS (0),
+        .PMP_PMPNCFG_RV  (),
+        .PMP_PMPADDR_RV  (),
+        .PMP_MSECCFG_RV  (),
+        .PMA_NUM_REGIONS (0),
+        .PMA_CFG         (),
+        .CLIC            (0),
+        .CLIC_ID_WIDTH   (5),
+        .LFSR0_CFG       (),
+        .LFSR1_CFG       (),
+        .LFSR2_CFG       ()
+    ) cv32e40s_core_i (
+        .clk_i (clk_i),
+        .rst_ni(rst_ni),
+
+        .scan_cg_en_i(1'b0),
+
+        .boot_addr_i        (BOOT_ADDR),
+        .mtvec_addr_i       (32'h0),
+        .dm_halt_addr_i     (DM_HALTADDRESS),
+        .mhartid_i          (32'h0),
+        .mimpid_patch_i     (4'h0),
+        .dm_exception_addr_i(32'h0),
+
+        .instr_req_o      (core_instr_req_o.req),
+        .instr_reqpar_o   (),
+        .instr_gnt_i      (core_instr_resp_i.gnt),
+        .instr_gntpar_i   (1'b0),
+        .instr_addr_o     (core_instr_req_o.addr),
+        .instr_achk_o     (),
+        .instr_prot_o     (),
+        .instr_dbg_o      (),
+        .instr_memtype_o  (),
+        .instr_rdata_i    (core_instr_resp_i.rdata),
+        .instr_rchk_i     ('0),
+        .instr_rvalid_i   (core_instr_resp_i.rvalid),
+        .instr_rvalidpar_i(1'b0),
+        .instr_err_i      (1'b0),
+
+        .data_req_o      (core_data_req_o.req),
+        .data_reqpar_o   (),
+        .data_gnt_i      (core_data_resp_i.gnt),
+        .data_gntpar_i   (1'b0),
+        .data_rvalid_i   (core_data_resp_i.rvalid),
+        .data_rvalidpar_i(1'b0),
+        .data_we_o       (core_data_req_o.we),
+        .data_be_o       (core_data_req_o.be),
+        .data_addr_o     (core_data_req_o.addr),
+        .data_achk_o     (),
+        .data_wdata_o    (core_data_req_o.wdata),
+        .data_prot_o     (),
+        .data_dbg_o      (),
+        .data_memtype_o  (),
+        .data_rdata_i    (core_data_resp_i.rdata),
+        .data_rchk_i     ('0),
+        .data_err_i      (1'b0),
+
+        .mcycle_o(),
+
+        .irq_i(irq_i),
+
+        .wu_wfe_i(1'b0),
+
+        .clic_irq_i      (),
+        .clic_irq_id_i   (),
+        .clic_irq_level_i(),
+        .clic_irq_priv_i (),
+        .clic_irq_shv_i  (),
+
+        .fencei_flush_req_o(),
+        .fencei_flush_ack_i(1'b1),
+
+        .debug_req_i      (debug_req_i),
+        .debug_havereset_o(),
+        .debug_running_o  (),
+        .debug_halted_o   (),
+        .debug_pc_valid_o (),
+        .debug_pc_o       (),
+
+        .alert_minor_o(),
+        .alert_major_o(),
+
+        .fetch_enable_i(fetch_enable),
+
+        .core_sleep_o
+    );
+
+    assign irq_ack_o = '0;
+    assign irq_id_o  = '0;
+    
   end else begin : gen_cv32e40p
 
     // instantiate the core

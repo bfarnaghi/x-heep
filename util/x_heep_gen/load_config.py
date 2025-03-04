@@ -185,6 +185,10 @@ def load_cfg_hjson(src: str, override: Optional[Override] = None) -> XHeep:
     bus_config = None
     ram_address_config = None
     linker_config = None
+    enable_user_mode = None
+    user_code_size = None
+    user_data_size = None
+    user_stack_size = None
 
     for key, value in config.items():
         if key == "ram_banks":
@@ -195,6 +199,14 @@ def load_cfg_hjson(src: str, override: Optional[Override] = None) -> XHeep:
             ram_address_config = value
         elif key == "linker_sections":
             linker_config = value
+        elif key == "enable_user_mode":
+            enable_user_mode = value
+        elif key == "user_code_size":
+            user_code_size = value
+        elif key == "user_data_size":
+            user_data_size = value
+        elif key == "user_stack_size":
+            user_stack_size = value
 
     if mem_config is None:
         raise RuntimeError("No memory configuration found")
@@ -207,7 +219,7 @@ def load_cfg_hjson(src: str, override: Optional[Override] = None) -> XHeep:
             RuntimeError("The ram_address should be an intger")
         ram_start = ram_address_config
 
-    system = XHeep(BusType(bus_config), ram_start, override=override)
+    system = XHeep(BusType(bus_config), ram_start, override=override, enable_user_mode=enable_user_mode, user_code_size=user_code_size, user_data_size=user_data_size, user_stack_size=user_stack_size)
     load_ram_configuration(system, mem_config)
 
     if linker_config is not None:

@@ -12,6 +12,7 @@ filesets:
     depend:
     - x-heep::packages
     - openhwgroup.org:ip:cv32e40p
+    - openhwgroup.org:ip:cv32e40s
     - openhwgroup.org:ip:cv32e40x
     - openhwgroup:cve2:cve2_top
     - esl_epfl:ip:cv32e40px
@@ -208,6 +209,24 @@ parameters:
     paramtype: vlogparam
     description: |
       Enables CORE-V-XIF interface for the CV32E40X and CV32E40PX cores. Admitted values: 1|0.
+    default: 0
+  SECURE:
+    datatype: int
+    paramtype: vlogparam
+    description: |
+      Enables Security Features for the CV32E40S cores. Admitted values: 1|0.
+    default: 1
+  INTEGRITY:
+    datatype: int
+    paramtype: vlogparam
+    description: |
+      Enables Security Feature "INTEGRITY" for the CV32E40S cores. Admitted values: 1|0.
+    default: 0
+  RFECC:
+    datatype: int
+    paramtype: vlogparam
+    description: |
+      Enables Security Feature "RFECC" for the CV32E40S cores. Admitted values: 1|0.
     default: 0
   USE_EXTERNAL_DEVICE_EXAMPLE:
     datatype: int

@@ -8,6 +8,9 @@ module tb_top #(
     parameter ZFINX                       = 0,
     parameter JTAG_DPI                    = 0,
     parameter X_EXT                       = 0,
+    parameter SECURE                      = 1,
+    parameter INTEGRITY                   = 0,
+    parameter RFECC                       = 0,
     parameter USE_EXTERNAL_DEVICE_EXAMPLE = 1
 );
 
@@ -195,6 +198,9 @@ module tb_top #(
       .FPU                        (FPU),
       .ZFINX                      (ZFINX),
       .X_EXT                      (X_EXT),
+      .SECURE                     (SECURE),
+      .INTEGRITY                  (INTEGRITY),
+      .RFECC                      (RFECC),
       .JTAG_DPI                   (JTAG_DPI),
       .USE_EXTERNAL_DEVICE_EXAMPLE(USE_EXTERNAL_DEVICE_EXAMPLE),
       .CLK_FREQUENCY              (CLK_FREQUENCY_KHz)

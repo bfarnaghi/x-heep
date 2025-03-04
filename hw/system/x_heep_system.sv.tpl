@@ -11,6 +11,9 @@ module x_heep_system
     parameter ZFINX = 0,
     parameter EXT_XBAR_NMASTER = 0,
     parameter X_EXT = 0,  // eXtension interface in cv32e40x
+    parameter SECURE = 1,        // Secure mode in cv32e40s  
+    parameter INTEGRITY  = 0,    // Integrity mode in cv32e40s
+    parameter RFECC = 0,         // RFECC mode in cv32e40s
     parameter AO_SPC_NUM = 0,
     //do not touch these parameters
     parameter AO_SPC_NUM_RND = AO_SPC_NUM == 0 ? 1 : AO_SPC_NUM,

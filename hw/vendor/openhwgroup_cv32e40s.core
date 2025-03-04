@@ -1,0 +1,77 @@
+CAPI=2:
+
+# Copyright 2021 OpenHW Group
+# Solderpad Hardware License, Version 2.1, see LICENSE.md for details.
+# SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
+
+name: "openhwgroup.org:ip:cv32e40s"
+description: "OpenHW Group RISC-V Core CV32E40S"
+
+filesets:
+  files_rtl:
+    files:
+      - openhwgroup_cv32e40s/rtl/include/cv32e40s_pkg.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_if_c_obi.sv
+      - openhwgroup_cv32e40s/rtl/../bhv/cv32e40s_sffs.sv
+      - openhwgroup_cv32e40s/rtl/../bhv/cv32e40s_sffr.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_dummy_instr.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_if_stage.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_csr.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_debug_triggers.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_cs_registers.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_register_file.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_register_file_ecc.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_register_file_wrapper.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_write_buffer.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_lsu_response_filter.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_load_store_unit.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_id_stage.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_i_decoder.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_m_decoder.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_b_decoder.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_decoder.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_compressed_decoder.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_sequencer.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_alignment_buffer.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_prefetch_unit.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_mult.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_int_controller.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_clic_int_controller.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_ex_stage.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_wb_stage.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_div.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_alu.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_ff_one.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_popcnt.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_alu_b_cpop.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_controller_fsm.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_controller_bypass.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_controller.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_obi_integrity_fifo.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_instr_obi_interface.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_data_obi_interface.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_prefetcher.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_sleep_unit.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_alert.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_core.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_mpu.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_pma.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_pmp.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_pc_target.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_wpt.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_pc_check.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_rchk_check.sv
+      - openhwgroup_cv32e40s/rtl/cv32e40s_lfsr.sv
+    file_type: systemVerilogSource
+
+  files_clk_gate:
+    files:
+      - openhwgroup_cv32e40s/bhv/cv32e40s_clock_gate.sv
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets:
+      - files_rtl
+      - target_sim? (files_clk_gate)
+      - target_sim_sc? (files_clk_gate)

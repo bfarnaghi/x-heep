@@ -11,6 +11,9 @@ module testharness #(
     parameter FPU                         = 0,
     parameter ZFINX                       = 0,
     parameter X_EXT                       = 0,         // eXtension interface in cv32e40x
+    parameter SECURE                      = 1,         // Secure mode in cv32e40s  
+    parameter INTEGRITY                   = 0,         // Integrity mode in cv32e40s
+    parameter RFECC                       = 0,         // RFECC mode in cv32e40s
     parameter JTAG_DPI                    = 0,
     parameter USE_EXTERNAL_DEVICE_EXAMPLE = 1,
     parameter CLK_FREQUENCY               = 'd100_000  //KHz
@@ -174,6 +177,9 @@ module testharness #(
     $display("%t: the parameter FPU is %x", $time, FPU);
     $display("%t: the parameter ZFINX is %x", $time, ZFINX);
     $display("%t: the parameter X_EXT is %x", $time, X_EXT);
+    $display("%t: the parameter SECURE is %x", $time, SECURE);
+    $display("%t: the parameter INTEGRITY is %x", $time, INTEGRITY);
+    $display("%t: the parameter RFECC is %x", $time, RFECC);
     $display("%t: the parameter ZFINX is %x", $time, ZFINX);
     $display("%t: the parameter JTAG_DPI is %x", $time, JTAG_DPI);
     $display("%t: the parameter EXT_DOMAINS is %x", $time, core_v_mini_mcu_pkg::EXTERNAL_DOMAINS);
@@ -196,6 +202,9 @@ module testharness #(
       .FPU(FPU),
       .ZFINX(ZFINX),
       .X_EXT(X_EXT),
+      .SECURE(SECURE),
+      .INTEGRITY(INTEGRITY),
+      .RFECC(RFECC),
       .EXT_XBAR_NMASTER(HEEP_EXT_XBAR_NMASTER)
   ) x_heep_system_i (
       .clk_i,

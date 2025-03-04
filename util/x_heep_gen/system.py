@@ -40,7 +40,8 @@ class XHeep():
     
     
     
-    def __init__(self, bus_type: BusType, ram_start_address: int = 0, override: Optional[Override] = None):
+    def __init__(self, bus_type: BusType, ram_start_address: int = 0, override: Optional[Override] = None, enable_user_mode: bool = False, user_code_size: Optional[int] = None, user_data_size: Optional[int] = None, user_stack_size: Optional[int] = None):
+        
         if not type(bus_type) is BusType:
             raise TypeError(f"XHeep.bus_type should be of type BusType not {type(self._bus_type)}")
         if not type(ram_start_address) is int:
@@ -73,6 +74,12 @@ class XHeep():
         if override is not None and override.numbanks_il is not None:
             self._ignore_ram_interleaved = True
             self._override_numbanks_il = override.numbanks_il
+        
+        # User Mode Memory Sizes
+        self.enable_user_mode = enable_user_mode
+        self.user_code_size = user_code_size
+        self.user_data_size = user_data_size
+        self.user_stack_size = user_stack_size
 
 
     def add_ram_banks(self, bank_sizes: "List[int]", section_name: str = ""):
@@ -108,6 +115,35 @@ class XHeep():
             self.add_linker_section_for_banks(banks, section_name)
         # Add all new banks if no error was raised
         self._ram_banks += banks
+
+        if (self.enable_user_mode):
+
+            # Define User Mode memory sizes (in KB)
+            user_code_size = self.user_code_size if self.user_code_size is not None else 32  # 32 KB for User Mode Code
+            user_data_size = self.user_data_size if self.user_data_size is not None else 16  # 16 KB for User Mode Data
+            user_stack_size = self.user_stack_size if self.user_stack_size is not None else 8  # 8 KB for User Mode Stack
+
+            # User Code Memory 
+            user_code = Bank(user_code_size, self._ram_next_addr, self._ram_next_idx, 0, 0)
+            self._ram_next_addr = user_code._end_address
+            self._ram_next_idx += 1
+
+            # User Data Memory
+            user_data = Bank(user_data_size, self._ram_next_addr, self._ram_next_idx, 0, 0)
+            self._ram_next_addr = user_data._end_address
+            self._ram_next_idx += 1
+
+            # User Stack Memory
+            user_stack = Bank(user_stack_size, self._ram_next_addr, self._ram_next_idx, 0, 0)
+            self._ram_next_addr = user_stack._end_address
+            self._ram_next_idx += 1
+
+            # Add linker sections for User Mode banks
+            self.add_linker_section_for_banks([user_code], "user_code")
+            self.add_linker_section_for_banks([user_data], "user_data")
+            self.add_linker_section_for_banks([user_stack], "user_stack")
+
+            self._ram_banks += [user_code, user_data, user_stack]
 
     
 

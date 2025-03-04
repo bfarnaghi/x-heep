@@ -21,4 +21,9 @@
             start: 0x00000E800
         }
     ]
+
+    enable_user_mode: false
+    user_code_size: 32
+    user_data_size: 16
+    user_stack_size: 8
 }
