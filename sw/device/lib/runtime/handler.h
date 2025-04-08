@@ -16,6 +16,7 @@ typedef enum exc_id {
   kBkpt = 3,
   kLoadAccFault = 5,
   kStrAccFault = 7,
+  uECall = 8,
   kECall = 11,
   kIdMax = 31
 } exc_id_t;

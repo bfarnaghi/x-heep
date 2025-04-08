@@ -62,6 +62,16 @@ __attribute__((weak)) void handler_exception(void) {
     case kECall:
       handler_ecall();
       break;
+    case uECall:
+      uint32_t syscall_id;
+      asm volatile("mv %0, a7" : "=r"(syscall_id));
+      handler_user_ecall(syscall_id);
+      uintptr_t mepc;
+      asm volatile("csrr %0, mepc" : "=r"(mepc));
+      mepc += 4;
+      asm volatile("csrw mepc, %0" :: "r"(mepc));
+      asm volatile("mret");
+      break;
     default:
       while (1) {
       };
@@ -113,6 +123,25 @@ __attribute__((weak)) void handler_ecall(void) {
   printf("Environment call encountered\n");
   while (1) {
   }
+}
+
+__attribute__((weak)) void handler_user_ecall(uint32_t syscall_id) {
+  switch (syscall_id) {
+    case 1:
+        run_secure_inference();
+        break;
+    
+    case 2: {
+      const char *msg;
+      asm volatile("mv %0, a0" : "=r"(msg));  // read pointer from user
+      printf("[U] %s\n", msg);                // print in M-mode
+      break;
+    }
+
+    default:
+        printf("[M] Unknown syscall ID: %u\n", syscall_id);
+        break;
+}
 }
 #ifdef __cplusplus
 }

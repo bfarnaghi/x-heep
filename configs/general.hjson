@@ -22,8 +22,11 @@
         }
     ]
 
-    enable_user_mode: false
+    enable_user_mode: true
     user_code_size: 32
     user_data_size: 16
     user_stack_size: 8
+
+    enable_shared_memory: true
+    shared_memory_size: 8
 }

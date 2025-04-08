@@ -306,7 +306,7 @@ module cpu_subsystem
         .DM_REGION_END   (32'hF0003FFF),
         .DBG_NUM_TRIGGERS(1),
         .PMP_GRANULARITY (0),
-        .PMP_NUM_REGIONS (0),
+        .PMP_NUM_REGIONS (6),
         .PMP_PMPNCFG_RV  (),
         .PMP_PMPADDR_RV  (),
         .PMP_MSECCFG_RV  (),

@@ -55,3 +55,4 @@ lint_off -rule WIDTH -file "*/rtl/cv32e40s_register_file.sv" -match "Operator CO
 lint_off -rule WIDTH -file "*/rtl/cv32e40s_register_file.sv" -match "Operator VAR 'RF_REG_RV' expects 32 bits on the Initial value, but Initial value's COND generates 38 bits.*"
 lint_off -rule WIDTH -file "*/rtl/cv32e40s_register_file_wrapper.sv" -match "Operator ASSIGNW expects 38 bits on the Assign RHS, but Assign RHS's ARRAYSEL generates 32 bits.*"
 lint_off -rule LITENDIAN -file "*/rtl/cv32e40s_pmp.sv" 
+lint_off -rule WIDTH -file "*/rtl/cv32e40s_cs_registers.sv" -match "Operator ADD expects 32 bits on the LHS, but*"

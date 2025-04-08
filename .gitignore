@@ -9,6 +9,8 @@ build/
 *.do
 *.jou
 *.str
+*.vcd*
+*.gtkw
 .venv/
 __pycache__/
 

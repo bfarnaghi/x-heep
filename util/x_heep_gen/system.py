@@ -40,7 +40,7 @@ class XHeep():
     
     
     
-    def __init__(self, bus_type: BusType, ram_start_address: int = 0, override: Optional[Override] = None, enable_user_mode: bool = False, user_code_size: Optional[int] = None, user_data_size: Optional[int] = None, user_stack_size: Optional[int] = None):
+    def __init__(self, bus_type: BusType, ram_start_address: int = 0, override: Optional[Override] = None, enable_user_mode: bool = False, user_code_size: Optional[int] = None, user_data_size: Optional[int] = None, user_stack_size: Optional[int] = None, enable_shared_memory: bool = False, shared_memory_size: Optional[int] = None):
         
         if not type(bus_type) is BusType:
             raise TypeError(f"XHeep.bus_type should be of type BusType not {type(self._bus_type)}")
@@ -80,6 +80,10 @@ class XHeep():
         self.user_code_size = user_code_size
         self.user_data_size = user_data_size
         self.user_stack_size = user_stack_size
+
+        # Shared Memory
+        self.enable_shared_memory = enable_shared_memory
+        self.shared_memory_size = shared_memory_size
 
 
     def add_ram_banks(self, bank_sizes: "List[int]", section_name: str = ""):
@@ -144,8 +148,17 @@ class XHeep():
             self.add_linker_section_for_banks([user_stack], "user_stack")
 
             self._ram_banks += [user_code, user_data, user_stack]
-
-    
+        
+        if self.enable_shared_memory:
+            # Define Shared Memory size (in KB)
+            shared_memory_size = self.shared_memory_size if self.shared_memory_size is not None else 64
+            # Shared Memory
+            shared_memory = Bank(shared_memory_size, self._ram_next_addr, self._ram_next_idx, 0, 0)
+            self._ram_next_addr = shared_memory._end_address
+            self._ram_next_idx += 1
+            # Add linker section for Shared Memory
+            self.add_linker_section_for_banks([shared_memory], "shared_memory")
+            self._ram_banks += [shared_memory]
 
 
     def add_ram_banks_il(self, num: int, bank_size: int, section_name: str = "", ignore_ignore: bool = False):
