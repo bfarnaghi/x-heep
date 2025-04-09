@@ -11,6 +11,7 @@ The currently available CPUs can be found in `hw/core-v-mini-mcu/cpu_subsystem.s
 - cv32e40p
 - cv32e40x
 - cv32e40px
+- cv32e40s
 
 You can also specify the CPU configuration in the `mcu_cfg.hjson` file. The default is:
 
