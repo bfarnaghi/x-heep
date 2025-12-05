@@ -186,7 +186,12 @@ def load_cfg_hjson(src: str, override: Optional[Override] = None) -> XHeep:
     ram_address_config = None
     linker_config = None
     enable_user_mode = None
-    user_size = None
+    # Initialize optional user/shared memory parameters to avoid UnboundLocalError
+    user_code_size = None
+    user_data_size = None
+    user_stack_size = None
+    enable_shared_memory = None
+    shared_memory_size = None
 
 
     for key, value in config.items():

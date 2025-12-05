@@ -127,19 +127,36 @@ __attribute__((weak)) void handler_ecall(void) {
 
 __attribute__((weak)) void handler_user_ecall(uint32_t syscall_id) {
   switch (syscall_id) {
-    case 1:
-        run_secure_inference();
-        break;
+    // case 1:
+    //     run_secure_inference();
+    //     break;
     
-    case 2: {
-      const char *msg;
-      asm volatile("mv %0, a0" : "=r"(msg));  // read pointer from user
-      printf("[U] %s\n", msg);                // print in M-mode
+    // case 2: {
+    //   const char *msg;
+    //   asm volatile("mv %0, a0" : "=r"(msg));  // read pointer from user
+    //   printf("[U] %s\n", msg);                // print in M-mode
+    //   break;
+    // }
+    case 0: // SYSCALL_EXIT: exit from user mode, terminate program
+      printf("U mode exit\n\r");
+      //printf("Prog compl succ\n\r");
+
+      // Read pointer from a0 register (passed by user mode)
+      volatile uint32_t *pointer;
+#ifdef IMC
+      pointer = (volatile uint32_t *)0x979c;
+#else
+      pointer = (volatile uint32_t *)0xd79c;
+#endif
+      //asm volatile("mv %0, a0" : "=r"(pointer));
+      printf("rcv ptr: %p\n\r", pointer);
+      printf("Mch Var: %x\n\r", *pointer);
+      
+      exit(0);
       break;
-    }
 
     default:
-        printf("[M] Unknown syscall ID: %u\n", syscall_id);
+        printf("[MACHINE MODE] Unknown syscall ID: %u\n", syscall_id);
         break;
 }
 }

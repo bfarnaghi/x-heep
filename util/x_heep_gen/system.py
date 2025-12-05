@@ -120,34 +120,41 @@ class XHeep():
         # Add all new banks if no error was raised
         self._ram_banks += banks
 
-        if (self.enable_user_mode):
+        # if (self.enable_user_mode):
 
-            # Define User Mode memory sizes (in KB)
-            user_code_size = self.user_code_size if self.user_code_size is not None else 32  # 32 KB for User Mode Code
-            user_data_size = self.user_data_size if self.user_data_size is not None else 16  # 16 KB for User Mode Data
-            user_stack_size = self.user_stack_size if self.user_stack_size is not None else 8  # 8 KB for User Mode Stack
+        #     # Define User Mode memory sizes (in KB)
+        #     user_code_size = self.user_code_size if self.user_code_size is not None else 32  # 32 KB for User Mode Code
+        #     user_data_size = self.user_data_size if self.user_data_size is not None else 16  # 16 KB for User Mode Data
+        #     user_stack_size = self.user_stack_size if self.user_stack_size is not None else 8  # 8 KB for User Mode Stack
 
-            # User Code Memory 
-            user_code = Bank(user_code_size, self._ram_next_addr, self._ram_next_idx, 0, 0)
-            self._ram_next_addr = user_code._end_address
-            self._ram_next_idx += 1
+        #     # User Code Memory 
+        #     user_code = Bank(user_code_size, self._ram_next_addr, self._ram_next_idx, 0, 0)
+        #     self._ram_next_addr = user_code._end_address
+        #     self._ram_next_idx += 1
 
-            # User Data Memory
-            user_data = Bank(user_data_size, self._ram_next_addr, self._ram_next_idx, 0, 0)
-            self._ram_next_addr = user_data._end_address
-            self._ram_next_idx += 1
+        #     # User Data Memory
+        #     user_data = Bank(user_data_size, self._ram_next_addr, self._ram_next_idx, 0, 0)
+        #     self._ram_next_addr = user_data._end_address
+        #     self._ram_next_idx += 1
 
-            # User Stack Memory
-            user_stack = Bank(user_stack_size, self._ram_next_addr, self._ram_next_idx, 0, 0)
-            self._ram_next_addr = user_stack._end_address
-            self._ram_next_idx += 1
+        #     # User Stack Memory
+        #     user_stack = Bank(user_stack_size, self._ram_next_addr, self._ram_next_idx, 0, 0)
+        #     self._ram_next_addr = user_stack._end_address
+        #     self._ram_next_idx += 1
 
-            # Add linker sections for User Mode banks
-            self.add_linker_section_for_banks([user_code], "user_code")
-            self.add_linker_section_for_banks([user_data], "user_data")
-            self.add_linker_section_for_banks([user_stack], "user_stack")
+        #     # Add linker sections for User Mode banks
+        #     self.add_linker_section_for_banks([user_code], "user_code")
+        #     self.add_linker_section_for_banks([user_data], "user_data")
+        #     self.add_linker_section_for_banks([user_stack], "user_stack")
 
-            self._ram_banks += [user_code, user_data, user_stack]
+        #     self._ram_banks += [user_code, user_data, user_stack]
+
+        #     for bank in self._ram_banks:
+        #         print(f"Bank {bank.name()}: Start Address = {bank.start_address():#08X}, End Address = {bank.end_address():#08X}, Size = {bank.size()} Bytes")
+        
+        #     for section in self._linker_sections:
+        #         print(f"Linker Section '{section.name}': Start = {section.start:#08X}, End = {section.end:#08X}, Size = {section.end - section.start} Bytes")
+
         
         if self.enable_shared_memory:
             # Define Shared Memory size (in KB)
@@ -292,6 +299,13 @@ class XHeep():
         :return: the validity of the configuration
         :rtype: bool
         """
+        for bank in self._ram_banks:
+            print(f"Bank {bank.name()}: Start Address = {bank.start_address():#08X}, End Address = {bank.end_address():#08X}, Size = {bank.size()} Bytes")
+        print("\n")
+        for section in self._linker_sections:
+            print(f"Linker Section '{section.name}': Start = {section.start:#08X}, End = {section.end:#08X}, Size = {section.end - section.start} Bytes")
+
+
         if not self.ram_numbanks() in range(2, 17):
             print(f"The number of banks should be between 2 and 16 instead of {self.ram_numbanks()}") #TODO: clarify upper limit
             return False
@@ -307,12 +321,12 @@ class XHeep():
         old_sec: Union[LinkerSection,None] = None
 
         for i, sec in enumerate(self._linker_sections):
-            if i == 0 and sec.name != "code":
-                print("The first linker section sould be called code.")
-                ret = False
-            elif i == 1 and sec.name != "data":
-                print("The second linker section sould be called data.")
-                ret = False
+            # if i == 0 and sec.name != "code":
+            #     print("The first linker section sould be called code.")
+            #     ret = False
+            # elif i == 1 and sec.name != "data":
+            #     print("The second linker section sould be called data.")
+            #     ret = False
 
             if old_sec is not None:
                 if sec.start < old_sec.end:

@@ -20,9 +20,10 @@ MEMORY
   /* Our testbench is a bit weird in that we initialize the RAM (thus
      allowing initialized sections to be placed there). Infact we dump all
      sections to ram. */
-  % for i, section in enumerate(xheep.iter_linker_sections()):
-    ram${i} (rwxai) : ORIGIN = ${f"{section.start:#08x}"}, LENGTH = ${f"{section.size:#08x}"}
-% endfor
+    ram0 (rwxai) : ORIGIN = 0x000000, LENGTH = 0x008000
+    ram1 (rwxai) : ORIGIN = 0x008000, LENGTH = 0x004000
+    ram2 (rwxai) : ORIGIN = 0x00c000, LENGTH = 0x008000
+    ram3 (rwxai) : ORIGIN = 0x014000, LENGTH = 0x004000
 }
 
 /*
@@ -36,9 +37,9 @@ SECTIONS
   PROVIDE(__boot_address = 0x180);
 
   /* stack and heap related settings */
-  __stack_size = DEFINED(__stack_size) ? __stack_size : 0x${stack_size};
+  __stack_size = DEFINED(__stack_size) ? __stack_size : 0x800;
   PROVIDE(__stack_size = __stack_size);
-  __heap_size = DEFINED(__heap_size) ? __heap_size : 0x${heap_size};
+  __heap_size = DEFINED(__heap_size) ? __heap_size : 0x800;
 
   /* Read-only sections, merged into text segment: */
   PROVIDE (__executable_start = SEGMENT_START("text-segment", 0x10000)); . = SEGMENT_START("text-segment", 0x10000) + SIZEOF_HEADERS;
@@ -90,11 +91,11 @@ SECTIONS
   .rodata         :
   {
     *(.rodata .rodata.* .gnu.linkonce.r.*)
-  } >ram2
+  } >ram1
   .rodata1        :
   {
     *(.rodata1)
-  } >ram2
+  } >ram1
 
   /* second level sbss and sdata, I don't think we need this */
   /* .sdata2         : {*(.sdata2 .sdata2.* .gnu.linkonce.s2.*)} */
@@ -149,11 +150,11 @@ SECTIONS
   {
     PROVIDE_HIDDEN (__tdata_start = .);
     *(.tdata .tdata.* .gnu.linkonce.td.*)
-  } >ram2
+  } >ram1
   .tbss     :
   {
     *(.tbss .tbss.* .gnu.linkonce.tb.*) *(.tcommon)
-  } >ram2
+  } >ram1
 
   /* initialization and termination routines */
   .preinit_array     :
@@ -161,21 +162,21 @@ SECTIONS
     PROVIDE_HIDDEN (__preinit_array_start = .);
     KEEP (*(.preinit_array))
     PROVIDE_HIDDEN (__preinit_array_end = .);
-  } >ram2
+  } >ram1
   .init_array     :
   {
     PROVIDE_HIDDEN (__init_array_start = .);
     KEEP (*(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*)))
     KEEP (*(.init_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .ctors))
     PROVIDE_HIDDEN (__init_array_end = .);
-  } >ram2
+  } >ram1
   .fini_array     :
   {
     PROVIDE_HIDDEN (__fini_array_start = .);
     KEEP (*(SORT_BY_INIT_PRIORITY(.fini_array.*) SORT_BY_INIT_PRIORITY(.dtors.*)))
     KEEP (*(.fini_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .dtors))
     PROVIDE_HIDDEN (__fini_array_end = .);
-  } >ram2
+  } >ram1
   .ctors          :
   {
     /* gcc uses crtbegin.o to find the start of
@@ -217,11 +218,11 @@ SECTIONS
     __DATA_BEGIN__ = .;
     *(.data .data.* .gnu.linkonce.d.*)
     SORT(CONSTRUCTORS)
-  } >ram2
+  } >ram1
   .data1          :
   {
     *(.data1)
-  } >ram2
+  } >ram1
 
   _lma_vma_data_offset = 0x0;
 
@@ -236,7 +237,7 @@ SECTIONS
     __SDATA_BEGIN__ = .;
     *(.srodata.cst16) *(.srodata.cst8) *(.srodata.cst4) *(.srodata.cst2) *(.srodata .srodata.*)
     *(.sdata .sdata.* .gnu.linkonce.s.*)
-  } >ram2
+  } >ram1
   _edata = .; PROVIDE (edata = .);
   . = .;
 
@@ -247,7 +248,7 @@ SECTIONS
     *(.dynsbss)
     *(.sbss .sbss.* .gnu.linkonce.sb.*)
     *(.scommon)
-  } >ram2
+  } >ram1
   .bss            :
   {
    *(.dynbss)
@@ -259,7 +260,7 @@ SECTIONS
       FIXME: Why do we need it? When there is no .bss section, we don't
       pad the .data section.  */
    . = ALIGN(. != 0 ? 32 / 8 : 1);
-  } >ram2
+  } >ram1
   . = ALIGN(32 / 8);
   . = SEGMENT_START("ldata-segment", .);
   . = ALIGN(32 / 8);
@@ -279,7 +280,7 @@ SECTIONS
    PROVIDE(__heap_start = .);
    . = __heap_size;
    PROVIDE(__heap_end = .);
-  } >ram2
+  } >ram1
 
   /* stack: we should consider putting this further to the top of the address
     space */
@@ -290,18 +291,20 @@ SECTIONS
    PROVIDE(_sp = .);
    PROVIDE(__stack_end = .);
    PROVIDE(__freertos_irq_stack_top = .);
-  } >ram2
+  } >ram1
 
-% for i, section in enumerate(xheep.iter_linker_sections()):
-% if not section.name in ["code", "data"]:
-  .${section.name} :
+  .user_code :
   {
     . = ALIGN(4);
-    *(.xheep_${section.name})
+    *(.xheep_user_code)
     . = ALIGN(4);
-  } >ram${i}
-% endif
-% endfor
+  } >ram1
+  .user_data :
+  {
+    . = ALIGN(4);
+    *(.xheep_user_data)
+    . = ALIGN(4);
+  } >ram3
 
   /* Stabs debugging sections.  */
   .stab          0 : { *(.stab) }
