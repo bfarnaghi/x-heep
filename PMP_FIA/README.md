@@ -34,9 +34,10 @@ Results are visible in the UART screen specified during execution
 2.A. In order to run different scenarios autonomously, in ```x-heep/run_pmp_scenarios.sh``` change: 
 - the chosen CORE unser analysis: ```SIM_DIR="build/cv32e40s/sim-verilator"```
 - the scenarios to test: ```declare -A SCENARIOS=(...)```
+
 2.B. In order to run just one scenario each time, in ```x-heep/Makefile``` put the ```COMPILER_FLAGS ?= ``` equals to `-D<Scenario_Name>`
 
-3. Run ```x-heep/run_pmp_scenarios.sh```
+3. Run ```PMP_FIA/run_pmp_scenarios.sh```
 
-4. Run ```x-heep/analyze_pmp_metrics_xheep.py``` to gather information about the stats of the mitigations:
+4. Run ```PMP_FIA/analyze_pmp_metrics_xheep.py``` to gather information about the stats of the mitigations:
 - ```python x-heep/analyze_pmp_metrics_xheep.py pmp_FIA_results_<date> PLAIN```

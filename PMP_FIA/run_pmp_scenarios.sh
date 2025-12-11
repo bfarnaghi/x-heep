@@ -1,7 +1,7 @@
 #!/bin/bash
 # Script to automatically run all PMP scenarios and save results
 
-SIMULATION_TIMEOUT=180 # seconds
+SIMULATION_TIMEOUT=120 # seconds
 
 set -e  # Exit on error
 

@@ -21,11 +21,23 @@ void user_mode_entry() {
     uint32_t syscall_id = 0;  // SYSCALL_EXIT
     volatile uint32_t* ptr = user_pointer_to_monitor;
     asm volatile (
-        "mv a7, %0;\n"
-        "mv a0, %1;\n"
+        "mv a7, %0\n"
+        "mv a0, %1\n"
         "ecall\n"
         :: "r"(syscall_id), "r"(ptr)
-        : "a7", "a0", "memory");
+        : "a7", "a0", "memory"
+    );
+}
+
+#define MTIME_BASE     0x0200BFF8UL   // standard CLINT mtime
+#define MTIME_FREQ_HZ  100000000UL    // 100 MHz from testbench
+
+static inline uint64_t read_mtime_mmio(void) {
+    return *(volatile uint64_t *)(MTIME_BASE);
+}
+
+static inline uint64_t mtime_to_ms(uint64_t ticks) {
+    return (ticks * 1000ULL) / MTIME_FREQ_HZ;
 }
 
 static inline uint64_t read_mcycle(void) {
@@ -88,6 +100,7 @@ void pmp_setup() {
     // - U-mode is limited by PMP entries with explicit permissions
     // ==============================================================
     uint64_t cycles_start, instret_start, cycles_end, instret_end;
+    uint8_t exit_flag=0;
 
     // abilita tutti i contatori (CY/IR incl.)
     asm volatile("csrw mcountinhibit, zero\n");
@@ -107,12 +120,13 @@ void pmp_setup() {
         "csrr  %0, pmpaddr0\n\r\t" : "=r"(pmpaddr0_MRC)
     );
     if (!pmpaddr0_MRC != !pmp0cfg) {
-        asm volatile("fence" ::: "memory");
-        cycles_end = read_mcycle();
-        instret_end = read_minstret();
-        printf("cyc: %lu, ins: %lu\n\r", cycles_end - cycles_start, instret_end - instret_start);
-        printf("[MRC] MRC triggered! pmpaddr0: 0x%x, pmp0cfg: 0x%x\n\r", pmpaddr0_MRC, pmp0cfg);
-        exit(1);
+        // asm volatile("fence" ::: "memory");
+        // cycles_end = read_mcycle();
+        // instret_end = read_minstret();
+        // printf("cyc: %lu, ins: %lu\n\r", cycles_end - cycles_start, instret_end - instret_start);
+        // printf("[MRC] MRC triggered! pmpaddr0: 0x%x, pmp0cfg: 0x%x\n\r", pmpaddr0_MRC, pmp0cfg);
+        // exit(1);
+        exit_flag=1;
     }
 #endif
 
@@ -152,12 +166,13 @@ void pmp_setup() {
         "csrr  %0, pmpaddr2\n\r\t" : "=r"(pmpaddr2_MRC)
     );
     if (!pmpaddr2_MRC != !pmp2cfg) {
-        asm volatile("fence" ::: "memory");
-        cycles_end = read_mcycle();
-        instret_end = read_minstret();
-        printf("cyc: %lu, ins: %lu\n\r", cycles_end - cycles_start, instret_end - instret_start);
-        printf("[MRC] MRC triggered! pmpaddr2: 0x%lx, pmp2cfg: 0x%x\n\r", pmpaddr2_MRC, pmp2cfg);
-        exit(1);
+        // asm volatile("fence" ::: "memory");
+        // cycles_end = read_mcycle();
+        // instret_end = read_minstret();
+        // printf("cyc: %lu, ins: %lu\n\r", cycles_end - cycles_start, instret_end - instret_start);
+        // printf("[MRC] MRC triggered! pmpaddr2: 0x%lx, pmp2cfg: 0x%x\n\r", pmpaddr2_MRC, pmp2cfg);
+        // exit(1);
+        exit_flag=1;
     }
 #endif
 
@@ -180,12 +195,13 @@ void pmp_setup() {
     asm volatile ("csrr  %0, pmpaddr0\n\r\t" : "=r"(pmpaddr0_DIs_2));
     asm volatile ("csrr  %0, pmpaddr2\n\r\t" : "=r"(pmpaddr2_DIs_2));
     if ((pmpaddr0_DIs_1 != pmpaddr0_DIs_2) || (pmpaddr2_DIs_1 != pmpaddr2_DIs_2)) {
-        asm volatile("fence" ::: "memory");
-        cycles_end = read_mcycle();
-        instret_end = read_minstret();
-        printf("cyc: %lu, ins: %lu\n\r", cycles_end - cycles_start, instret_end - instret_start);
-        printf("[DIs] DIs triggered! pmpaddr0_1: 0x%lx, pmpaddr0_2: 0x%lx, pmpaddr2_1: 0x%lx, pmpaddr2_2: 0x%lx,\n\r", pmpaddr0_DIs_1, pmpaddr0_DIs_2, pmpaddr2_DIs_1, pmpaddr2_DIs_2);
-        exit(1);
+        // asm volatile("fence" ::: "memory");
+        // cycles_end = read_mcycle();
+        // instret_end = read_minstret();
+        // printf("cyc: %lu, ins: %lu\n\r", cycles_end - cycles_start, instret_end - instret_start);
+        // printf("[DIs] DIs triggered! pmpaddr0_1: 0x%lx, pmpaddr0_2: 0x%lx, pmpaddr2_1: 0x%lx, pmpaddr2_2: 0x%lx,\n\r", pmpaddr0_DIs_1, pmpaddr0_DIs_2, pmpaddr2_DIs_1, pmpaddr2_DIs_2);
+        // exit(1);
+        exit_flag=1;
     }
 #endif
 
@@ -203,12 +219,13 @@ void pmp_setup() {
     asm volatile ("csrr  %0, pmpaddr0\n\r\t" : "=r"(pmpaddr0_TIs_3));
     asm volatile ("csrr  %0, pmpaddr2\n\r\t" : "=r"(pmpaddr2_TIs_3));
     if (((pmpaddr0_TIs_1 != pmpaddr0_TIs_2) || (pmpaddr0_TIs_2 != pmpaddr0_TIs_3)) || ((pmpaddr2_TIs_1 != pmpaddr2_TIs_2) || (pmpaddr2_TIs_2 != pmpaddr2_TIs_3))) {
-        asm volatile("fence" ::: "memory");
-        cycles_end = read_mcycle();
-        instret_end = read_minstret();
-        printf("cyc: %lu, ins: %lu\n\r", cycles_end - cycles_start, instret_end - instret_start);
-        printf("[TIs] TIs triggered! pmpaddr0_1: 0x%lx, pmpaddr0_2: 0x%lx, pmpaddr2_1: 0x%lx, pmpaddr2_2: 0x%lx,\n\r", pmpaddr0_TIs_1, pmpaddr0_TIs_2, pmpaddr2_TIs_1, pmpaddr2_TIs_2);
-        exit(1);
+        // asm volatile("fence" ::: "memory");
+        // cycles_end = read_mcycle();
+        // instret_end = read_minstret();
+        // printf("cyc: %lu, ins: %lu\n\r", cycles_end - cycles_start, instret_end - instret_start);
+        // printf("[TIs] TIs triggered! pmpaddr0_1: 0x%lx, pmpaddr0_2: 0x%lx, pmpaddr2_1: 0x%lx, pmpaddr2_2: 0x%lx,\n\r", pmpaddr0_TIs_1, pmpaddr0_TIs_2, pmpaddr2_TIs_1, pmpaddr2_TIs_2);
+        // exit(1);
+        exit_flag=1;
     }
 #endif
 
@@ -217,6 +234,10 @@ void pmp_setup() {
     cycles_end = read_mcycle();
     instret_end = read_minstret();
     printf("cyc: %lu, ins: %lu\n\r", cycles_end - cycles_start, instret_end - instret_start);
+
+    if (exit_flag) {
+        exit(1);
+    }
 
     //printf("[MACHINE MODE] PMP configured\n\r");
 }

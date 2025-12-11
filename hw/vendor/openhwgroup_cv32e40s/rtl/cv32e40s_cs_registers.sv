@@ -148,7 +148,8 @@ module cv32e40s_cs_registers import cv32e40s_pkg::*;
   localparam PMP_ADDR_WIDTH = (PMP_GRANULARITY > 0) ? 33 - PMP_GRANULARITY : 32;
 
   // localparam bit USER = SECURE;
-  localparam bit SHADOW = 0;
+  // JACK: enabled CSR shadow copy 
+  localparam bit SHADOW = 1; 
 
   localparam logic [31:0] MISA_VALUE =
     (32'(1)             <<  2) | // C - Compressed extension
