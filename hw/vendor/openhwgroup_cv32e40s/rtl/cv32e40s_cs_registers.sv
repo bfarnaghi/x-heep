@@ -360,8 +360,8 @@ module cv32e40s_cs_registers import cv32e40s_pkg::*;
   logic [31:0] [1:0]            mhpmcounter_we;                                 // Performance counters write enable
   logic [31:0] [31:0]           mhpmevent_q, mhpmevent_n, mhpmevent_rdata;      // Event enable
   logic [31:0]                  mcountinhibit_q, mcountinhibit_n, mcountinhibit_rdata; // Performance counter inhibit
-  // logic [NUM_HPM_EVENTS-1:0]    hpm_events;                                     // Events for performance counters
-  logic                         hpm_events[NUM_HPM_EVENTS];                     // Events for performance counters
+  logic [NUM_HPM_EVENTS-1:0]    hpm_events;                                     // Events for performance counters
+  // logic                         hpm_events[NUM_HPM_EVENTS];                     // Events for performance counters
   logic [31:0] [63:0]           mhpmcounter_increment;                          // Increment of mhpmcounter_q
   logic [31:0]                  mhpmcounter_write_lower;                        // Write 32 lower bits of mhpmcounter_q
   logic [31:0]                  mhpmcounter_write_upper;                        // Write 32 upper bits mhpmcounter_q

@@ -105,7 +105,6 @@ module cv32e40s_sleep_unit import cv32e40s_pkg::*;
 
   // Main clock gate of CV32E40P
   cv32e40s_clock_gate
-    #(.LIB (LIB))
   core_clock_gate_i
   (
     .clk_i        ( clk_ungated_i   ),
